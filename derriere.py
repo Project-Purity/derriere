@@ -9,26 +9,32 @@ By Project Purity <projectpurity@kittymail.com>
 This file is licensed under the MIT license
 """
 
-import os
-import sys
-import time
-import urllib2
-import BeautifulSoup as bs
-import requests
-import gzip
+import os #For joining paths
+import time #For sleeping
+import sys #For exiting
+import urllib2 #Net stuff
+import BeautifulSoup as bs #Net stuff
+import gzip #For decoding Puro's sloppy shit (figure of speech)
 
 hdr = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
 
 def read(url, out_folder, total):
   num = 1
   while True:
-    url = (url + "_" + str(num) + ".html")
+    time.sleep(1)
+    if num > 99:
+      url = url[:-8] + str(num) + ".html"
+    elif num > 9:
+      url = url[:-7] + str(num) + ".html"
+    else:
+      url = url[:-6] + str(num) + ".html"
     print url
     if num <= total:
       num = num + 1
+      print "next page"
     else:
       print "Finished. Perv."
-      break
+      sys.exit()
     main(url, out_folder)
 
 
@@ -38,12 +44,10 @@ def main(url, out_folder):
   data = remotefile.read()
   soup = bs.BeautifulSoup(data)
   for img in soup.findAll("img"):
-    if url[:-4] in img["src"]:
-      url = "http://pururin.com" + image["src"]
-      dlimage = requests.get(url)
     imgloc = ("http://pururin.com" + img["src"])
     print imgloc
-    DownloadFile(imgloc, out_folder, img["src"])
+    if not "header" in img["src"]:
+      DownloadFile(imgloc, out_folder, img["src"])
 
 
 
@@ -66,17 +70,21 @@ def DownloadFile(url, out_folder, imagesource):
     return
 
   data = remotefile.read()
+  print filepath
   if remotefile.info().get("content-encoding") == "gzip":
     data = zlib.decompress(data, zlib.MAX_WBITS + 16)
     print "File is gzip-encoded"
+  
+  code = open(filename, "wb")
+  code.write(data)
 
-  with open(filepath, "wb") as code:
-    code.write(data) # this is resulting in a corrupted file
+  #with open(filepath, "wb") as code:
+    #code.write(data) # this is resulting in a corrupted file
 
 
 
 if __name__ == "__main__":
-  """Syntax: python derriere.py <url> <number of pages>"""
+  """Syntax: python derriere.py <url of first page> <number of pages>"""
   print "Starting scraper..."
   
   try:
@@ -88,6 +96,6 @@ if __name__ == "__main__":
   url = sys.argv[-2]
   total = sys.argv[-1]
   print sys.argv
-  out_folder = "/test/"
+  out_folder = "test/"
   read(url, out_folder, total)
 

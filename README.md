@@ -1,3 +1,5 @@
+Please note: derriere is not finished, and not even usable atm. We're not getting paid for this shit, so be patient.
+
 # Derriere
 ### Yes, there should be a grave accent there
  

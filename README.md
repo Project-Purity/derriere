@@ -19,7 +19,7 @@ Rather easy, really.
 
 1. Make sure you have Python 2.7 installed (binary versions coming soon).
 2. Have derriere.py sitting nice and comfy somewhere on your HD.
-3. Open CMD, and type `python derriere.py [url of first page of doujin] [number of pages the doujin has]`
+3. Open CMD, and type `python derriere.py [url of first page of doujin]`
 4. Go to the folder where derriere.py is; there should be a new subfolder with in it, your pr0n. You perv.
 
 

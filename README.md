@@ -24,7 +24,6 @@ Rather easy, really.
 
 
 This project is licensed under the MIT license: basically, you can do whatever the fuck you want with this code, as long as you give credits to Project Purity. Also, if your PC blows up or something, we're not liable. Thanks.
-I wanna note that IRC user 'isit' is a huge fag.
   
   
   

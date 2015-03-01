@@ -75,15 +75,15 @@ def downloadFile(url, out_folder, imagesource):
 if __name__ == "__main__":
   """Syntax: python derriere.py <url of first page>"""
   print "Starting scraper..."
-  
+
   try:
     sys.argv[-2] #Make sure the user read the fucking manual
   except:
-    print "That is not how you run it. RTFM."
-    sys.exit() #*sigh*
-  
-  url = sys.argv[-1]
-  #print sys.argv
+    print "Please enter the url of the first page of the doujin:"
+    url = raw_input()
+  else:
+    url = sys.argv[-1]
+
   out_folder = "dl"
   read(url, out_folder)
 

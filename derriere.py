@@ -18,11 +18,11 @@ import gzip #For decoding Puro's sloppy shit (figure of speech)
 
 hdr = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"}
 
-def read(url, out_folder, total):
+def read(url, out_folder):
   num = 1
+  main(url, out_folder)
   while True:
-    time.sleep(3)
-    print "round and round, what fun"
+    #time.sleep(1)
     request = urllib2.Request(url, headers=hdr)
     remotefile = urllib2.urlopen(request)
     data = remotefile.read()
@@ -44,11 +44,9 @@ def main(url, out_folder):
   remotefile = urllib2.urlopen(request)
   data = remotefile.read()
   soup = bs.BeautifulSoup(data)
-  #print soup
   for img in soup.findAll("img"):
     imgloc = ("http://pururin.com" + img["src"])
     if not "header" in img["src"]:
-      #print imgloc + " from " + url
       downloadFile(imgloc, out_folder, img["src"])
 
 
@@ -56,42 +54,37 @@ def downloadFile(url, out_folder, imagesource):
   global hdr
   request = urllib2.Request(url, headers=hdr)
   remotefile = urllib2.urlopen(request)
-  # Get the filename from the content-disposition header
 
-  # use RegEx to slice out the part we want (filename)
   filename = imagesource.split("/")[-1]
+
   filepath = os.path.join(out_folder, filename)
-  if (os.path.exists(filepath)):
-    return
+  if not (os.path.exists(out_folder)):
+    os.makedirs(out_folder)
 
   data = remotefile.read()
   print url
   if remotefile.info().get("content-encoding") == "gzip":
     data = zlib.decompress(data, zlib.MAX_WBITS + 16)
     print "File is gzip-encoded"
-  
-  code = open(filename, "wb")
-  code.write(data)
 
-  #with open(filepath, "wb") as code:
-    #code.write(data) # this is resulting in a corrupted file
+  with open(filepath, "wb") as code:
+    code.write(data)
 
 
 
 if __name__ == "__main__":
-  """Syntax: python derriere.py <url of first page> <number of pages>"""
+  """Syntax: python derriere.py <url of first page>"""
   print "Starting scraper..."
   
   try:
-    sys.argv[-3] #Make sure the user read the fucking manual
+    sys.argv[-2] #Make sure the user read the fucking manual
   except:
     print "That is not how you run it. RTFM."
     sys.exit() #*sigh*
   
-  url = sys.argv[-2]
-  total = sys.argv[-1]
+  url = sys.argv[-1]
   #print sys.argv
-  out_folder = "test/"
-  read(url, out_folder, total)
+  out_folder = "dl"
+  read(url, out_folder)
 
 #*jk bae u kno i luv u

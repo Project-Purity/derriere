@@ -21,21 +21,22 @@ hdr = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML,
 def read(url, out_folder, total):
   num = 1
   while True:
-    time.sleep(1)
-    if num > 99:
-      url = url[:-8] + str(num) + ".html"
-    elif num > 9:
-      url = url[:-7] + str(num) + ".html"
-    else:
-      url = url[:-6] + str(num) + ".html"
-    print url
-    if num <= total:
-      num = num + 1
-      print "next page"
-    else:
-      print "Finished. Perv."
-      sys.exit()
-    main(url, out_folder)
+    time.sleep(3)
+    print "round and round, what fun"
+    request = urllib2.Request(url, headers=hdr)
+    remotefile = urllib2.urlopen(request)
+    data = remotefile.read()
+    soup = bs.BeautifulSoup(data)
+    for elink in soup.findAll("a"): #Here's inefficient code, but it wasn't even Purr*
+      for thing in elink.attrs:
+        if "class" in thing:
+          if elink["class"] == "image-next":
+            if "finish" not in elink["href"]:
+              url = "http://pururin.com" + elink["href"]
+              main(url, out_folder)
+            else:
+              print "Done!"
+              sys.exit()
 
 
 def main(url, out_folder):
@@ -43,21 +44,15 @@ def main(url, out_folder):
   remotefile = urllib2.urlopen(request)
   data = remotefile.read()
   soup = bs.BeautifulSoup(data)
+  #print soup
   for img in soup.findAll("img"):
     imgloc = ("http://pururin.com" + img["src"])
-    print imgloc
     if not "header" in img["src"]:
-      DownloadFile(imgloc, out_folder, img["src"])
+      #print imgloc + " from " + url
+      downloadFile(imgloc, out_folder, img["src"])
 
 
-
-def DownloadFile(url, out_folder, imagesource):
-  """Downloads a file from the specified url to the local system.
-
-  Keyword arguments:
-  url -- the remote url to the resource to download
-  out_folder -- the local path to save the downloaded resource 
-  """
+def downloadFile(url, out_folder, imagesource):
   global hdr
   request = urllib2.Request(url, headers=hdr)
   remotefile = urllib2.urlopen(request)
@@ -70,7 +65,7 @@ def DownloadFile(url, out_folder, imagesource):
     return
 
   data = remotefile.read()
-  print filepath
+  print url
   if remotefile.info().get("content-encoding") == "gzip":
     data = zlib.decompress(data, zlib.MAX_WBITS + 16)
     print "File is gzip-encoded"
@@ -90,12 +85,13 @@ if __name__ == "__main__":
   try:
     sys.argv[-3] #Make sure the user read the fucking manual
   except:
-    print "RTFM"
+    print "That is not how you run it. RTFM."
     sys.exit() #*sigh*
   
   url = sys.argv[-2]
   total = sys.argv[-1]
-  print sys.argv
+  #print sys.argv
   out_folder = "test/"
   read(url, out_folder, total)
 
+#*jk bae u kno i luv u
